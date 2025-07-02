@@ -24,45 +24,44 @@ function nextSequence(){
     var randomChosenButton = $("." + randomChosenColour)[0]
     animateButton(randomChosenButton)
     playSound(randomChosenColour)
-    
-
-
-    
 }
 
 
-$('.btn').click(function(){
-    var userChosenColour = this.id
-    animateButton(this)
-    playSound(userChosenColour)
-    setTimeout(function(){
-        userClickedPattern.push(userChosenColour)
-        var lastIndex = userClickedPattern.length - 1 
-        checkAnswer(lastIndex)
-    
-        
-    },1000)
-    
-    
 
-
-
-})
-
-firstkey = 0 
-start = false
+var started = false 
 $(document).keypress(function(event){
-    var keyPressed = event.key 
-    if (keyPressed === 'Enter'){
-        firstkey ++;
-        if (firstkey === 1){
+    if (!started){
+        started = true
+        setTimeout(function(){
             nextSequence();
 
-        }
+        },2000)
     }
 
 
 })
+
+
+$('.btn').click(function(){
+
+    if (started){
+
+        
+        var userChosenColour = this.id
+        animateButton(this)
+        playSound(userChosenColour)
+        setTimeout(function(){
+            userClickedPattern.push(userChosenColour)
+            var lastIndex = userClickedPattern.length - 1 
+            checkAnswer(lastIndex)
+            
+            
+        },1000)
+        
+    }
+})
+
+    
 
 
 function checkAnswer(currentLevel){
@@ -79,6 +78,7 @@ function checkAnswer(currentLevel){
 
         }
         else{
+            started = false 
             $('h1').text('YOU LOST THE GAME')
             setTimeout(function(){
                 playSound("wrong")
@@ -87,18 +87,15 @@ function checkAnswer(currentLevel){
                     $('body')[0].classList.remove('game-over')
                 },1000)
 
-                $('h1').text('Press Enter to Replay the game. ')
+                $('h1').text('Press any key to Replay the game. ')
 
             },100)
-            
-            $(document).keypress(function(event){
-                if (event.key == 'Enter'){
-                    startOver();
-                }
-            })
+
+            startOver();
+            }
             }
         }
-    }
+    
     
 
 
@@ -106,5 +103,6 @@ function startOver(){
     userClickedPattern = []
     gamePattern = []
     level = 0
-    nextSequence(); 
+    started = false
+
 }
